@@ -14,7 +14,7 @@ class GoalNode extends StatelessWidget {
       decoration: BoxDecoration(
         shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
         color: Colors.blue,
-        borderRadius: isCircle ? null : BorderRadius.circular(10),
+        borderRadius: isCircle ? null : BorderRadius.circular(5),
       ),
       child: Center(
         child: Text(
