@@ -1,21 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:graphite/graphite.dart';
 
-class GoalHierarchyScreen extends StatelessWidget {
+import 'create_goal_screen.dart';
+
+class GoalHierarchyScreen extends StatefulWidget {
+  @override
+  _GoalHierarchyScreenState createState() => _GoalHierarchyScreenState();
+}
+
+class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
+  List<NodeInput> goalNodes = [
+    NodeInput(id: 'Goal 1', next: [
+      EdgeInput(outcome: 'Goal 2'),
+      EdgeInput(outcome: 'Goal 3'),
+      EdgeInput(outcome: 'Goal 4')
+    ]),
+    NodeInput(id: 'Goal 2', next: []),
+    NodeInput(id: 'Goal 3', next: [EdgeInput(outcome: 'Goal 5')]),
+    NodeInput(
+        id: 'Goal 4',
+        next: [EdgeInput(outcome: 'Goal 5'), EdgeInput(outcome: 'Goal 6')]),
+    NodeInput(id: 'Goal 5', next: []),
+    NodeInput(
+        id: 'Goal 6',
+        next: [EdgeInput(outcome: 'Goal 7'), EdgeInput(outcome: 'Goal 8')]),
+    NodeInput(id: 'Goal 7', next: []),
+    NodeInput(id: 'Goal 8', next: []),
+  ];
+
+  void addGoal(String goalId,String goalName, List<String> subGoals) {
+    setState(() {
+      goalNodes.add(NodeInput(
+        id: goalName,
+        next: subGoals.map((dep) => EdgeInput(outcome: dep)).toList(),
+      ));
+      debugPrint(goalNodes.map((node) => 'Node ID: ${node.id}, Next: ${node.next.map((edge) => edge.outcome).join(", ")}').toList().toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    const goalNodes = '['
-        '{"id":"Goal 1","next":[{"outcome":"Goal 2","type":"one"},{"outcome":"Goal 3","type":"one"},{"outcome":"Goal 4","type":"one"}]},'
-        '{"id":"Goal 2","next":[]},'
-        '{"id":"Goal 3","next":[{"outcome":"Goal 5","type":"one"}]},'
-        '{"id":"Goal 4","next":[{"outcome":"Goal 5","type":"one"},{"outcome":"Goal 6","type":"one"}]},'
-        '{"id":"Goal 5","next":[]},'
-        '{"id":"Goal 6","next":[{"outcome":"Goal 7","type":"one"},{"outcome":"Goal 8","type":"one"}]},'
-        '{"id":"Goal 7","next":[]},'
-        '{"id":"Goal 8","next":[]}'
-        ']';
-
-    List<NodeInput> list = nodeInputFromJson(goalNodes);
     return Scaffold(
       appBar: AppBar(
         leading: const Icon(
@@ -30,7 +54,7 @@ class GoalHierarchyScreen extends StatelessWidget {
         maxScale: 2.0,
         boundaryMargin: EdgeInsets.all(800),
         child: DirectGraph(
-          list: list,
+          list: goalNodes,
           centered: true,
           defaultCellSize: Size(100.0, 80.0),
           cellPadding: EdgeInsets.all(30.0),
@@ -68,6 +92,21 @@ class GoalHierarchyScreen extends StatelessWidget {
             );
           },
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.white,
+        shape: CircleBorder(),
+        onPressed: () async {
+          final newGoal = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CreateGoalScreen()),
+          );
+          if (newGoal != null) {
+            addGoal(newGoal.id,newGoal.name, newGoal.subGoals);
+          }
+        },
+        child: Icon(Icons.add),
       ),
     );
   }
