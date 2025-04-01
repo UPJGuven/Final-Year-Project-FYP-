@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "662959637128",
+    "firebase_url": "https://goal-setting-fyp-2012033-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "goal-setting-fyp-2012033",
+    "storage_bucket": "goal-setting-fyp-2012033.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662959637128:android:713803b1f25317d6b4153d",
+        "android_client_info": {
+          "package_name": "com.example.fyp_goalapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5t1P3ji9pbnsRbk4oSeUgod3VJBEGVrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

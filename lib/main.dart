@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'screens/goal_hierarchy_screen.dart';
 import 'screens/todo_list_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 }
 
 class MyApp extends StatelessWidget {

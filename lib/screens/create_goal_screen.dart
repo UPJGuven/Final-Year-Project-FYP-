@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../goal.dart';
+import '../goal_service.dart';
 
 class CreateGoalScreen extends StatefulWidget {
   @override
@@ -34,9 +35,18 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   name: _nameController.text,
                   description: _descriptionController.text,
                 );
+
+                Map<String, dynamic> newGoalDB = {
+                  'title': 'Run a marathon',
+                  'description': 'Train and complete a marathon within a year.',
+                  'startDate': '2024-12-31',
+                  'endDate': '2025-12-31',
+                };
+                createGoal(newGoalDB);
+
                 Navigator.pop(context, newGoal); // Return goal to previous screen
               },
-              child: Text('Save Goal'),
+              child: Text('Add Goal'),
             ),
           ],
         ),
