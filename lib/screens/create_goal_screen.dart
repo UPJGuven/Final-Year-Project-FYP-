@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../goal.dart';
 import '../goal_service.dart';
@@ -10,6 +11,21 @@ class CreateGoalScreen extends StatefulWidget {
 class _CreateGoalScreenState extends State<CreateGoalScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
+  void _addGoal() async {
+    Map<String, dynamic> goalData = {
+      "id": "autogenId",
+      'parentGoalId': null, // Change if this goal has a parent
+      'userId': 'user_12345', // Replace with actual user ID
+      "goalDetails": {
+        'name': 'My New Goal', // Replace with user input
+        'description': 'Description of my goal',
+        'startDate': Timestamp.now(), // Example start date
+        'endDate': Timestamp.now(), // Example end date
+      }
+    };
+    await createGoalMap(goalData);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,15 +51,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   name: _nameController.text,
                   description: _descriptionController.text,
                 );
-
-                Map<String, dynamic> newGoalDB = {
-                  'title': 'Run a marathon',
-                  'description': 'Train and complete a marathon within a year.',
-                  'startDate': '2024-12-31',
-                  'endDate': '2025-12-31',
-                };
-                createGoal(newGoalDB);
-
+                _addGoal();
                 Navigator.pop(context, newGoal); // Return goal to previous screen
               },
               child: Text('Add Goal'),
