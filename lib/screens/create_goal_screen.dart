@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../goal.dart';
 import '../goal_service.dart';
 
 class CreateGoalScreen extends StatefulWidget {
@@ -16,9 +15,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     Map<String, dynamic> goalData = {
       "id": "autogenId",
       'parentGoalId': null, // Change if this goal has a parent
-      'userId': 'user_12345', // Replace with actual user ID
+      'userId': 'user_12346', // Replace with actual user ID
       "goalDetails": {
-        'name': 'My New Goal', // Replace with user input
+        'name': 'Different Goal Name', // Replace with user input
         'description': 'Description of my goal',
         'startDate': Timestamp.now(), // Example start date
         'endDate': Timestamp.now(), // Example end date

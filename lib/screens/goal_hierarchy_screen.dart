@@ -74,6 +74,8 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
               cellPadding: EdgeInsets.all(30.0),
               orientation: MatrixOrientation.Vertical,
               nodeBuilder: (context, node) {
+                final goalIdToName = Provider.of<GoalProvider>(context, listen: false).goalIdToName;
+                final name = goalIdToName[node.id] ?? '[Missing Name]';
                 return Container(
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
@@ -81,7 +83,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                     borderRadius: BorderRadius.circular(8.0),
                   ),
                   child: Text(
-                    node.id,
+                    name,
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16.0,
