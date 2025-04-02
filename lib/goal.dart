@@ -4,7 +4,7 @@ class Goal {
   String description;
   DateTime? startDate;
   DateTime? endDate;
-  List<String> subGoals;
+  List<String> subGoalId;
 
-  Goal({required this.id, required this.name, this.description = '', this.startDate, this.endDate, this.subGoals = const []});
+  Goal({required this.id, required this.name, this.description = '', this.startDate, this.endDate, this.subGoalId = const []});
 }

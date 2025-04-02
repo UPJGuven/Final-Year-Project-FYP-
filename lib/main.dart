@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_goalapp/screens/loading_screen.dart';
 import 'screens/goal_hierarchy_screen.dart';
 import 'screens/todo_list_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'goal_provider.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MyApp());
+  String userId = "user_12346";
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => GoalProvider(userId)),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: MainScreen(),
+      home: LoadingScreen(),
     );
   }
 }

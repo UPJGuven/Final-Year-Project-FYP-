@@ -46,13 +46,13 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                final newGoal = Goal(
-                  id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  name: _nameController.text,
-                  description: _descriptionController.text,
-                );
+                // final newGoal = Goal(
+                //   id: DateTime.now().millisecondsSinceEpoch.toString(),
+                //   name: _nameController.text,
+                //   description: _descriptionController.text,
+                // );
                 _addGoal();
-                Navigator.pop(context, newGoal); // Return goal to previous screen
+                Navigator.pop(context); // Return goal to previous screen
               },
               child: Text('Add Goal'),
             ),
