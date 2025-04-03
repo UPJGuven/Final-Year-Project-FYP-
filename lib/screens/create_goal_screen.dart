@@ -17,8 +17,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
       'parentGoalId': null, // Change if this goal has a parent
       'userId': 'user_12346', // Replace with actual user ID
       "goalDetails": {
-        'name': 'Different Goal Name', // Replace with user input
-        'description': 'Description of my goal',
+        'name': _nameController.text, // Replace with user input
+        'description': _descriptionController.text,
         'startDate': Timestamp.now(), // Example start date
         'endDate': Timestamp.now(), // Example end date
       }

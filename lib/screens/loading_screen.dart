@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../goal_provider.dart';
-import 'goal_hierarchy_screen.dart';
+import 'package:fyp_goalapp/main.dart';
 
 class LoadingScreen extends StatelessWidget {
   @override
@@ -19,7 +19,7 @@ class LoadingScreen extends StatelessWidget {
               Future.microtask(() {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => GoalHierarchyScreen()),
+                  MaterialPageRoute(builder: (context) => MainScreen(initialIndex: 0)),
                 );
               });
               return Container();  // Empty container as we are already navigating
