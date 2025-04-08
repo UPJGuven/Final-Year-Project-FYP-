@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../goal_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class CreateGoalScreen extends StatefulWidget {
   @override
@@ -12,18 +13,24 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
   final TextEditingController _descriptionController = TextEditingController();
 
   void _addGoal() async {
-    Map<String, dynamic> goalData = {
-      "id": "autogenId",
-      'parentGoalId': null, // Change if this goal has a parent
-      'userId': 'user_12346', // Replace with actual user ID
-      "goalDetails": {
-        'name': _nameController.text, // Replace with user input
-        'description': _descriptionController.text,
-        'startDate': Timestamp.now(), // Example start date
-        'endDate': Timestamp.now(), // Example end date
-      }
-    };
-    await createGoalMap(goalData);
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      Map<String, dynamic> goalData = {
+        "id": "autogenId",
+        'parentGoalId': null, // Change if this goal has a parent
+        'userId': user.uid, // Replace with actual user ID
+        "goalDetails": {
+          'name': _nameController.text, // Replace with user input
+          'description': _descriptionController.text,
+          'startDate': Timestamp.now(), // Example start date
+          'endDate': Timestamp.now(), // Example end date
+        }
+      };
+      await createGoalMap(goalData);
+      } else {
+      print("User not Authenticated");
+    }
+
   }
 
   @override

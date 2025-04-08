@@ -29,7 +29,6 @@ class GoalProvider with ChangeNotifier {
         for (var goal in goals)
           goal['id']: goal['goalDetails']?['name'] ?? '[Unnamed Goal]'
       };
-
       _goalNodes = _convertToNodes(goals);
       notifyListeners();
     });
@@ -53,14 +52,13 @@ class GoalProvider with ChangeNotifier {
     }).toList();
   }
 
-
-  void addGoalNode(String goalName, List<String> subGoals) {
-    goalNodes.add(
-      NodeInput(
-        id: goalName,
-        next: subGoals.map((dep) => EdgeInput(outcome: dep)).toList(),
-      ),
-    );
-    notifyListeners(); // Notify UI to rebuild
-  }
+  // void addGoalNode(String goalName, List<String> subGoals) {
+  //   goalNodes.add(
+  //     NodeInput(
+  //       id: goalName,
+  //       next: subGoals.map((dep) => EdgeInput(outcome: dep)).toList(),
+  //     ),
+  //   );
+  //   notifyListeners(); // Notify UI to rebuild
+  // }
 }

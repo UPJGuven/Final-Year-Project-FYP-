@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_goalapp/screens/loading_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'firebase_options.dart';
+import 'goal_provider.dart';
+import 'screens/loading_screen.dart';
+import 'screens/login_screen.dart';
 import 'screens/goal_hierarchy_screen.dart';
 import 'screens/todo_list_screen.dart';
 import 'widgets/bottom_nav_bar.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'goal_provider.dart';
-import 'package:provider/provider.dart';
-
-import 'screens/login_screen.dart';
-import 'screens/main_screen.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'firebase_options.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  String userId = "user_12346";
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => GoalProvider(userId)),
-      ],
-      child: MyApp(),
-    ),
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -32,10 +21,37 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Goal Setting App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: LoadingScreen(),
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: AuthWrapper(), // Decides what to show based on authentication
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        // While waiting for auth info, show a loading indicator
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+        // If a user is signed in, pass the userId to GoalProvider and go to MainScreen
+        if (snapshot.hasData && snapshot.data != null) {
+          final String userId = snapshot.data!.uid;
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(create: (_) => GoalProvider(userId)),
+            ],
+            child: MainScreen(initialIndex: 0), // default to Goal Hierarchy screen
+          );
+        }
+        // If not signed in, show the LoginScreen
+        return LoginScreen();
+      },
     );
   }
 }
