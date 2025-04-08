@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../auth_service.dart';
+import 'login_screen.dart';
 
 
 class SettingsScreen extends StatelessWidget {
@@ -18,7 +19,10 @@ class SettingsScreen extends StatelessWidget {
             title: Text('Sign Out'),
             onTap: () async {
               await _authService.signOut();
-              Navigator.pushReplacementNamed(context, '/');
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => LoginScreen()),
+                    (Route<dynamic> route) => false, // Removes all previous routes
+              );
             },
           ),
           // Add more settings options here as needed.

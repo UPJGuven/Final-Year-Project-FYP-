@@ -15,14 +15,13 @@ class AuthService {
         return null; // User canceled sign-in
       }
         final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      print("googleAuth: accessToken=${googleAuth.accessToken}, idToken=${googleAuth.idToken}");
       final credential = GoogleAuthProvider.credential(
           accessToken: googleAuth.accessToken,
           idToken: googleAuth.idToken,
         );
 
       UserCredential result = await _auth.signInWithCredential(credential);
-      print("LOOK HERE DUMMY ${result.user}");
+      print(result.user);
       return result.user;
 
     } catch (e) {
