@@ -7,6 +7,8 @@ class GoalProvider with ChangeNotifier {
   List<NodeInput> get goalNodes => _goalNodes;
   Map<String, String> _goalIdToName = {};
   Map<String, String> get goalIdToName => _goalIdToName;
+  List<Map<String, dynamic>> _goals = [];
+  List<Map<String, dynamic>> get goals => _goals;
 
   GoalProvider(String userId) {
     listenToGoals(userId); // Start listening on provider init
@@ -24,11 +26,11 @@ class GoalProvider with ChangeNotifier {
         goalData['parentGoalId'] = goalData['parentGoalId'] ?? ''; // Default to an empty string if null
         return goalData;
       }).toList();
-      print(goals);
       _goalIdToName = {
         for (var goal in goals)
           goal['id']: goal['goalDetails']?['name'] ?? '[Unnamed Goal]'
       };
+      _goals = goals; // save raw goal maps for logic checks
       _goalNodes = _convertToNodes(goals);
       notifyListeners();
     });
@@ -36,17 +38,11 @@ class GoalProvider with ChangeNotifier {
 
   List<NodeInput> _convertToNodes(List<Map<String, dynamic>> goals) {
     return goals.map((goal) {
-      final goalId = goal['id'] ?? '';
-
       return NodeInput(
-          id: goal['id'],
+        id: goal['id'], // ✅ use unique goal ID from Firestore
         next: goals
-            .where((g) => g['parentGoalId'] == goalId)
-            .map((childGoal) {
-          final childDetails = childGoal['goalDetails'] ?? {};
-          final childName = childDetails['name'] ?? '[Unnamed Subgoal]';
-          return EdgeInput(outcome: childName);
-        })
+            .where((g) => g['parentGoalId'] == goal['id'])
+            .map((childGoal) => EdgeInput(outcome: childGoal['id'])) // ✅ link by Firestore ID
             .toList(),
       );
     }).toList();

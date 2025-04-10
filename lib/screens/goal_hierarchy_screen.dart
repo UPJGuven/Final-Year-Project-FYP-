@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:graphite/graphite.dart';
 import 'package:provider/provider.dart';
 import '../goal_provider.dart';
 import 'create_goal_screen.dart';
+import 'edit_goal_screen.dart';
 import 'settings_screen.dart';
 
 class GoalHierarchyScreen extends StatefulWidget {
@@ -17,34 +19,105 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
   //     EdgeInput(outcome: 'Goal 3'),
   //     EdgeInput(outcome: 'Goal 4')
   //   ]),
-  //   NodeInput(id: 'Goal 2', next: []),
-  //   NodeInput(id: 'Goal 3', next: [EdgeInput(outcome: 'Goal 5')]),
-  //   NodeInput(
-  //       id: 'Goal 4',
-  //       next: [EdgeInput(outcome: 'Goal 5'), EdgeInput(outcome: 'Goal 6')]),
-  //   NodeInput(id: 'Goal 5', next: []),
-  //   NodeInput(
-  //       id: 'Goal 6',
-  //       next: [EdgeInput(outcome: 'Goal 7'), EdgeInput(outcome: 'Goal 8')]),
-  //   NodeInput(id: 'Goal 7', next: []),
-  //   NodeInput(id: 'Goal 8', next: []),
-  // ];
 
-  // void addGoal(String goalId,String goalName, List<String> subGoals) {
-  //   setState(() {
-  //     goalNodes.add(NodeInput(
-  //       id: goalName,
-  //       next: subGoals.map((dep) => EdgeInput(outcome: dep)).toList(),
-  //     ));
-  //     debugPrint(goalNodes.map((node) => 'Node ID: ${node.id}, Next: ${node.next.map((edge) => edge.outcome).join(", ")}').toList().toString());
-  //   });
-  // }
+  void _showGoalOptions(BuildContext context, String goalId) async {
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
 
-  // void addGoal(BuildContext context, String goalId, String goalName, List<String> subGoals) {
-  //   final goalProvider = Provider.of<GoalProvider>(context, listen: false);
-  //
-  //   goalProvider.addGoalNode(goalName, subGoals);
-  // }
+    final goalProvider = Provider.of<GoalProvider>(context, listen: false);
+    final goalHasParent = goalProvider.goals.any(
+          (goal) => goal['id'] == goalId && goal['parentGoalId'] != null && goal['parentGoalId'] != '',
+    );
+    final menuItems = <PopupMenuEntry>[
+      PopupMenuItem(value: 'sub-goal', child: Text('Create New Sub-goal')),
+      if (!goalHasParent) // only show this if goal has no parent
+        PopupMenuItem(value: 'parentGoal', child: Text('Create New Parent Goal')),
+      PopupMenuItem(value: 'edit', child: Text('Edit Goal')),
+      PopupMenuItem(value: 'delete', child: Text('Delete Goal')),
+    ];
+
+    final result = await showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+          100, 300, 0, 0), // You can adjust this or calculate dynamically
+      items: menuItems
+    );
+
+    switch (result) {
+      case 'sub-goal':
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => CreateGoalScreen(parentGoalId: goalId),
+            ));
+        break;
+      case 'parentGoal':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CreateGoalScreen(
+              parentGoalId: goalId,
+              isParentGoal: true,
+            ),
+          ),
+        );
+        break;
+      case 'edit':
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EditGoalScreen(goalId: goalId),
+            ));
+        break;
+      case 'delete':
+        _showDeleteConfirmation(context, goalId);
+        break;
+    }
+  }
+
+  void _showDeleteConfirmation(BuildContext context, String goalId) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Delete Goal'),
+        content: Text('Are you sure you want to delete this goal?\n \n'
+            'NOTE: This action will separate the sub-goals into a new tree.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                await _deleteGoal(goalId);
+                Navigator.of(context).pop(); // Close the dialog AFTER delete
+              } catch (e) {
+                print("Failed to delete goal: $e");
+                Navigator.of(context).pop(); // Still close the dialog, even on error
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to delete goal')),
+                );
+              }
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteGoal(String goalId) async {
+    final goalsRef = FirebaseFirestore.instance.collection('Goal');
+
+    final subgoals = await goalsRef.where('parentGoalId', isEqualTo: goalId).get();
+    for (var doc in subgoals.docs) {
+      await doc.reference.update({'parentGoalId': ''});
+    }
+
+    await goalsRef.doc(goalId).delete();
+    print('Deleted goal $goalId');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +150,6 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
           // 👈 Updates when goals change
           builder: (context, goalProvider, child) {
             final goalNodes = goalProvider.goalNodes;
-
             return goalNodes.isEmpty
                 ? Center(child: Text("No goals found")) // Handles empty state
                 : DirectGraph(
@@ -91,18 +163,21 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                           Provider.of<GoalProvider>(context, listen: false)
                               .goalIdToName;
                       final name = goalIdToName[node.id] ?? '[Missing Name]';
-                      return Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Text(
-                          name,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
+                      return GestureDetector(
+                        onLongPress: () => _showGoalOptions(context, node.id),
+                        child: Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Text(
+                            name,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       );
