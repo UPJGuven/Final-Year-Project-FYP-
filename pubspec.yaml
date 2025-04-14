@@ -58,6 +58,14 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - assets/images/ShmooMoo_2025.png
+    - assets/images/FYP Logo v1.0 No Line.png
+    - assets/images/FYP Logo No Text v1.0.png
+  fonts:
+    - family: MADEOkineSans
+      fonts:
+      - asset: assets/fonts/MADEOkineSansPERSONALUSE-Regular.otf
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

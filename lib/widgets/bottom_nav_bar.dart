@@ -20,7 +20,7 @@ class BottomNavBar extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onTap(0),
               child: Container(
-                color: currentIndex == 0 ? Colors.blue : Colors.white,
+                color: currentIndex == 0 ? Colors.orange[600] : Colors.white,
                 child: Center(
                   child: Icon(
                     Icons.account_tree_rounded,
@@ -35,7 +35,7 @@ class BottomNavBar extends StatelessWidget {
             child: GestureDetector(
               onTap: () => onTap(1),
               child: Container(
-                color: currentIndex == 1 ? Colors.blue : Colors.white,
+                color: currentIndex == 1 ? Colors.orange[600] : Colors.white,
                 child: Center(
                   child: Icon(
                     Icons.checklist,

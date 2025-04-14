@@ -89,21 +89,23 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
         child: ListView(
           children: [
             TextField(
-              controller: _nameController,
-              decoration: InputDecoration(labelText: 'Goal Name'),
-            ),
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Goal Name'),
+                maxLength: 45),
             TextField(
               controller: _descriptionController,
               decoration: InputDecoration(labelText: 'Description'),
             ),
             SizedBox(height: 16),
             ListTile(
-              title: Text('Start Date: ${_startDate.toLocal().toString().split(' ')[0]}'),
+              title: Text(
+                  'Start Date: ${_startDate.toLocal().toString().split(' ')[0]}'),
               trailing: Icon(Icons.calendar_today),
               onTap: () => _selectDate(context, true),
             ),
             ListTile(
-              title: Text('End Date: ${_endDate.toLocal().toString().split(' ')[0]}'),
+              title: Text(
+                  'End Date: ${_endDate.toLocal().toString().split(' ')[0]}'),
               trailing: Icon(Icons.calendar_today),
               onTap: () => _selectDate(context, false),
             ),

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../goal_provider.dart';
 import 'create_goal_screen.dart';
 import 'edit_goal_screen.dart';
+import 'help_guidance_screen.dart';
 import 'settings_screen.dart';
 
 class GoalHierarchyScreen extends StatefulWidget {
@@ -122,21 +123,39 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: const Icon(
-          Icons.account_tree_rounded,
-          color: Colors.blue,
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Higher-Arc",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 8), // spacing between text and image
+            Image.asset(
+              'assets/images/FYP Logo No Text v1.0.png',
+              height: 30,
+            ),
+          ],
         ),
-        title: Text('Goal Hierarchy'),
         actions: [
+          IconButton(
+            icon: Icon(Icons.info_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => HelpGuidanceScreen(showOnComplete: false)),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              // Navigate to the Settings screen
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
-              );
+              Navigator.push(context, MaterialPageRoute(builder: (_) => SettingsScreen()));
             },
           ),
         ],
@@ -155,7 +174,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                 : DirectGraph(
                     list: goalNodes,
                     centered: true,
-                    defaultCellSize: Size(100.0, 80.0),
+                    defaultCellSize: Size(140.0, 100.0),
                     cellPadding: EdgeInsets.all(30.0),
                     orientation: MatrixOrientation.Vertical,
                     nodeBuilder: (context, node) {
@@ -172,7 +191,9 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: Text(
+                            textAlign: TextAlign.center,
                             name,
+
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16.0,
@@ -201,7 +222,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.orange[600],
         foregroundColor: Colors.white,
         shape: CircleBorder(),
         onPressed: () {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../goal_provider.dart';
 import 'package:fyp_goalapp/main.dart';
+import 'main_screen.dart';
 
 class LoadingScreen extends StatelessWidget {
   @override
