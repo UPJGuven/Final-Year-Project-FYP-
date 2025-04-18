@@ -132,7 +132,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              "Higher-Arc",
+              "Goal Hierarchy",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             SizedBox(width: 8), // spacing between text and image
