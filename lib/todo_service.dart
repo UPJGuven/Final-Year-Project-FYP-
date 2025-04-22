@@ -50,9 +50,9 @@ Future<void> addTask(String text) async {
 
 Future<void> updateTask(String docId, String newText, bool isDone) async {
   await _firestore.collection('ToDo').doc(docId).update({
-    'text': newText,
-    'completed': isDone,
-  });
+'text': newText,
+'completed': isDone,
+});
 }
 
 Future<void> updateTaskPosition(String docId, int newPosition) async {
