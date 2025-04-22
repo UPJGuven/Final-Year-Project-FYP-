@@ -127,7 +127,21 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
             return Container(
               key: ValueKey(taskId),
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue[500]!, Colors.blue[600]!],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(8.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(2, 2),
+                  ),
+                ],
+              ),
               child: ListTile(
                 leading: IconButton(
                   icon: Icon(

@@ -8,6 +8,7 @@ import 'edit_goal_screen.dart';
 import 'help_guidance_screen.dart';
 import 'settings_screen.dart';
 import '../widgets/goal_detail_popup.dart';
+import '../widgets/background_shape_painter.dart';
 
 class GoalHierarchyScreen extends StatefulWidget {
   @override
@@ -15,72 +16,7 @@ class GoalHierarchyScreen extends StatefulWidget {
 }
 
 class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
-  // List<NodeInput> goalNodes = [
-  //   NodeInput(id: 'Goal 1', next: [
-  //     EdgeInput(outcome: 'Goal 2'),
-  //     EdgeInput(outcome: 'Goal 3'),
-  //     EdgeInput(outcome: 'Goal 4')
-  //   ]),
-
-  // void _showGoalOptions(BuildContext context, String goalId) async {
-  //   final goalProvider = Provider.of<GoalProvider>(context, listen: false);
-  //   final goalHasParent = goalProvider.goals.any(
-  //         (goal) => goal['id'] == goalId && goal['parentGoalId'] != null && goal['parentGoalId'] != '',
-  //   );
-  //
-  //   final menuItems = <PopupMenuEntry>[
-  //     PopupMenuItem(value: 'viewGoal', child: Text('View Goal')),
-  //     PopupMenuItem(value: 'sub-goal', child: Text('Create New Sub-goal')),
-  //     if (!goalHasParent)
-  //       PopupMenuItem(value: 'parentGoal', child: Text('Create New Parent Goal')),
-  //     PopupMenuItem(value: 'edit', child: Text('Edit Goal')),
-  //     PopupMenuItem(value: 'delete', child: Text('Delete Goal')),
-  //   ];
-  //
-  //   final result = await showMenu(
-  //     context: context,
-  //     position: RelativeRect.fromLTRB(100, 300, 0, 0),
-  //     items: menuItems,
-  //   );
-  //
-  //   switch (result) {
-  //     case 'sub-goal':
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: goalId)),
-  //       );
-  //       break;
-  //     case 'parentGoal':
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(
-  //           builder: (_) => CreateGoalScreen(parentGoalId: goalId, isParentGoal: true),
-  //         ),
-  //       );
-  //       break;
-  //     case 'edit':
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
-  //       );
-  //       break;
-  //     case 'viewGoal':
-  //       showGoalDetailPopup(
-  //         context: context,
-  //         goalId: goalId,
-  //         onEdit: () {
-  //           Navigator.push(
-  //             context,
-  //             MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
-  //           );
-  //         },
-  //       );
-  //       break;
-  //     case 'delete':
-  //       _showDeleteConfirmation(context, goalId);
-  //       break;
-  //   }
-  // }
+  final TransformationController _transformController = TransformationController();
 
   void _showDeleteConfirmation(BuildContext context, String goalId) {
     showDialog(
@@ -101,7 +37,8 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                 Navigator.of(context).pop(); // Close the dialog AFTER delete
               } catch (e) {
                 print("Failed to delete goal: $e");
-                Navigator.of(context).pop(); // Still close the dialog, even on error
+                Navigator.of(context)
+                    .pop(); // Still close the dialog, even on error
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Failed to delete goal')),
                 );
@@ -117,7 +54,8 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
   Future<void> _deleteGoal(String goalId) async {
     final goalsRef = FirebaseFirestore.instance.collection('Goal');
 
-    final subgoals = await goalsRef.where('parentGoalId', isEqualTo: goalId).get();
+    final subgoals =
+        await goalsRef.where('parentGoalId', isEqualTo: goalId).get();
     for (var doc in subgoals.docs) {
       await doc.reference.update({'parentGoalId': ''});
     }
@@ -154,115 +92,139 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => HelpGuidanceScreen(showOnComplete: false)),
+                MaterialPageRoute(
+                    builder: (_) => HelpGuidanceScreen(showOnComplete: false)),
               );
             },
           ),
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => SettingsScreen()));
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (_) => SettingsScreen()));
             },
           ),
         ],
       ),
-      body: InteractiveViewer(
-        constrained: false,
-        minScale: 0.5,
-        maxScale: 2.0,
-        boundaryMargin: EdgeInsets.all(800),
-        child: Consumer<GoalProvider>(
-          // 👈 Updates when goals change
-          builder: (context, goalProvider, child) {
-            final goalNodes = goalProvider.goalNodes;
-            return goalNodes.isEmpty
-                ? Center(child: Text("No goals found")) // Handles empty state
-                : DirectGraph(
-                    list: goalNodes,
-                    centered: true,
-                    defaultCellSize: Size(140.0, 100.0),
-                    cellPadding: EdgeInsets.all(30.0),
-                    orientation: MatrixOrientation.Vertical,
-                    nodeBuilder: (context, node) {
-                      final goalIdToName =
-                          Provider.of<GoalProvider>(context, listen: false)
-                              .goalIdToName;
-                      final name = goalIdToName[node.id] ?? '[Missing Name]';
-                      return GestureDetector(
-                        onLongPress: () {
-                          showGoalDetailPopup(
-                            context: context,
-                            goalId: node.id,
-                            onEdit: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: node.id)),
-                              );
-                            },
-                            onSubGoal: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: node.id)),
-                              );
-                            },
-                            onParentGoal: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (_) => CreateGoalScreen(
-                                  parentGoalId: node.id,
-                                  isParentGoal: true,
-                                )),
-                              );
-                            },
-                            onDelete: () => _showDeleteConfirmation(context, node.id),
-                          );
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            name,
+      body: ValueListenableBuilder<Matrix4>(
+        valueListenable: _transformController,
+        builder: (context, matrix, _) {
+          final panOffset = Offset(matrix.storage[12], matrix.storage[13]);
 
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: CustomPaint(
+                    painter: BackgroundShapePainter(panOffset),
+                  ),
+                ),
+              ),
+              Consumer<GoalProvider>(
+                builder: (context, goalProvider, child) {
+                  final goalNodes = goalProvider.goalNodes;
+                  return InteractiveViewer(
+                    transformationController: _transformController,
+                    constrained: false,
+                    minScale: 0.5,
+                    maxScale: 2.0,
+                    boundaryMargin: EdgeInsets.all(800),
+                    child: goalNodes.isEmpty
+                        ? Center(child: Text("No goals found"))
+                        : DirectGraph(
+                      list: goalNodes,
+                      centered: true,
+                      defaultCellSize: Size(140.0, 100.0),
+                      cellPadding: EdgeInsets.all(30.0),
+                      orientation: MatrixOrientation.Vertical,
+                      nodeBuilder: (context, node) {
+                        final goalIdToName = Provider.of<GoalProvider>(context, listen: false).goalIdToName;
+                        final name = goalIdToName[node.id] ?? '[Missing Name]';
+                        return GestureDetector(
+                          onLongPress: () {
+                            showGoalDetailPopup(
+                              context: context,
+                              goalId: node.id,
+                              onEdit: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: node.id)),
+                                );
+                              },
+                              onSubGoal: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: node.id)),
+                                );
+                              },
+                              onParentGoal: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => CreateGoalScreen(parentGoalId: node.id, isParentGoal: true),
+                                  ),
+                                );
+                              },
+                              onDelete: () => _showDeleteConfirmation(context, node.id),
+                            );
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.blue[500]!, Colors.blue[600]!],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 4,
+                                  offset: Offset(2, 4),
+                                ),
+                              ],
+                            ),
+                            child: Text(
+                              name,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                    styleBuilder: (edge) {
-                      var paint = Paint()
-                        ..color = Colors.grey
-                        ..style = PaintingStyle.stroke
-                        ..strokeCap = StrokeCap.round
-                        ..strokeJoin = StrokeJoin.round
-                        ..strokeWidth = 3;
+                        );
+                      },
+                      styleBuilder: (edge) {
+                        var paint = Paint()
+                          ..color = Colors.grey
+                          ..style = PaintingStyle.stroke
+                          ..strokeCap = StrokeCap.round
+                          ..strokeJoin = StrokeJoin.round
+                          ..strokeWidth = 3;
 
-                      return EdgeStyle(
-                        lineStyle: LineStyle.solid,
-                        linePaint: paint,
-                        borderRadius: 80,
-                      );
-                    },
+                        return EdgeStyle(
+                          lineStyle: LineStyle.solid,
+                          linePaint: paint,
+                          borderRadius: 80,
+                        );
+                      },
+                    ),
                   );
-          },
-        ),
+                },
+              ),
+            ],
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange[600],
         foregroundColor: Colors.white,
         shape: CircleBorder(),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreateGoalScreen()),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateGoalScreen()));
         },
         child: Icon(Icons.add),
       ),
