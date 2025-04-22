@@ -22,65 +22,65 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
   //     EdgeInput(outcome: 'Goal 4')
   //   ]),
 
-  void _showGoalOptions(BuildContext context, String goalId) async {
-    final goalProvider = Provider.of<GoalProvider>(context, listen: false);
-    final goalHasParent = goalProvider.goals.any(
-          (goal) => goal['id'] == goalId && goal['parentGoalId'] != null && goal['parentGoalId'] != '',
-    );
-
-    final menuItems = <PopupMenuEntry>[
-      PopupMenuItem(value: 'viewGoal', child: Text('View Goal')),
-      PopupMenuItem(value: 'sub-goal', child: Text('Create New Sub-goal')),
-      if (!goalHasParent)
-        PopupMenuItem(value: 'parentGoal', child: Text('Create New Parent Goal')),
-      PopupMenuItem(value: 'edit', child: Text('Edit Goal')),
-      PopupMenuItem(value: 'delete', child: Text('Delete Goal')),
-    ];
-
-    final result = await showMenu(
-      context: context,
-      position: RelativeRect.fromLTRB(100, 300, 0, 0),
-      items: menuItems,
-    );
-
-    switch (result) {
-      case 'sub-goal':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: goalId)),
-        );
-        break;
-      case 'parentGoal':
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => CreateGoalScreen(parentGoalId: goalId, isParentGoal: true),
-          ),
-        );
-        break;
-      case 'edit':
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
-        );
-        break;
-      case 'viewGoal':
-        showGoalDetailPopup(
-          context: context,
-          goalId: goalId,
-          onEdit: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
-            );
-          },
-        );
-        break;
-      case 'delete':
-        _showDeleteConfirmation(context, goalId);
-        break;
-    }
-  }
+  // void _showGoalOptions(BuildContext context, String goalId) async {
+  //   final goalProvider = Provider.of<GoalProvider>(context, listen: false);
+  //   final goalHasParent = goalProvider.goals.any(
+  //         (goal) => goal['id'] == goalId && goal['parentGoalId'] != null && goal['parentGoalId'] != '',
+  //   );
+  //
+  //   final menuItems = <PopupMenuEntry>[
+  //     PopupMenuItem(value: 'viewGoal', child: Text('View Goal')),
+  //     PopupMenuItem(value: 'sub-goal', child: Text('Create New Sub-goal')),
+  //     if (!goalHasParent)
+  //       PopupMenuItem(value: 'parentGoal', child: Text('Create New Parent Goal')),
+  //     PopupMenuItem(value: 'edit', child: Text('Edit Goal')),
+  //     PopupMenuItem(value: 'delete', child: Text('Delete Goal')),
+  //   ];
+  //
+  //   final result = await showMenu(
+  //     context: context,
+  //     position: RelativeRect.fromLTRB(100, 300, 0, 0),
+  //     items: menuItems,
+  //   );
+  //
+  //   switch (result) {
+  //     case 'sub-goal':
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: goalId)),
+  //       );
+  //       break;
+  //     case 'parentGoal':
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (_) => CreateGoalScreen(parentGoalId: goalId, isParentGoal: true),
+  //         ),
+  //       );
+  //       break;
+  //     case 'edit':
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
+  //       );
+  //       break;
+  //     case 'viewGoal':
+  //       showGoalDetailPopup(
+  //         context: context,
+  //         goalId: goalId,
+  //         onEdit: () {
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
+  //           );
+  //         },
+  //       );
+  //       break;
+  //     case 'delete':
+  //       _showDeleteConfirmation(context, goalId);
+  //       break;
+  //   }
+  // }
 
   void _showDeleteConfirmation(BuildContext context, String goalId) {
     showDialog(
@@ -189,7 +189,34 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                               .goalIdToName;
                       final name = goalIdToName[node.id] ?? '[Missing Name]';
                       return GestureDetector(
-                        onLongPress: () => _showGoalOptions(context, node.id),
+                        onLongPress: () {
+                          showGoalDetailPopup(
+                            context: context,
+                            goalId: node.id,
+                            onEdit: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: node.id)),
+                              );
+                            },
+                            onSubGoal: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: node.id)),
+                              );
+                            },
+                            onParentGoal: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (_) => CreateGoalScreen(
+                                  parentGoalId: node.id,
+                                  isParentGoal: true,
+                                )),
+                              );
+                            },
+                            onDelete: () => _showDeleteConfirmation(context, node.id),
+                          );
+                        },
                         child: Container(
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
