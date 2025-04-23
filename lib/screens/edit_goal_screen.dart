@@ -85,50 +85,186 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
     final formatter = DateFormat('yyyy-MM-dd');
 
     return Scaffold(
-      appBar: AppBar(title: Text('Edit Goal')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "Edit Goal",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            SizedBox(width: 8), // spacing between text and image
+            Image.asset(
+              'assets/images/FYP Logo No Text v1.0.png',
+              height: 30,
+            ),
+          ],
+        ),
+      ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextField(
+                  Text(
+                    'Goal Name',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue[500]!, Colors.blue[600]!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
                       controller: _nameController,
-                      decoration: InputDecoration(labelText: 'Goal Name'),
-                      maxLength: 45),
-                  TextField(
-                    controller: _descriptionController,
-                    decoration: InputDecoration(labelText: 'Description'),
+                      maxLength: 45,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        counterText: '',
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      ),
+                    ),
                   ),
                   SizedBox(height: 16),
+                  Text(
+                    'Goal Description',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 8),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue[500]!, Colors.blue[600]!],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 4,
+                          offset: Offset(2, 4),
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _descriptionController,
+                      maxLines: 8,
+                      style: TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  Text(
+                    "Start Date",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 4),
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                            "Start Date: ${_startDate != null ? formatter.format(_startDate!) : 'Not set'}"),
+                          _startDate != null
+                              ? formatter.format(_startDate!)
+                              : 'Not selected',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                      TextButton(
+                      TextButton.icon(
+                        icon: Icon(
+                          Icons.calendar_today,
+                          color: Colors.orange[600],
+                          size: 40,
+                        ),
+                        label: Text("Select",
+                            style: TextStyle(color: Colors.orange[600])),
                         onPressed: () => _pickDate(context, true),
-                        child: Text('Select Start Date'),
                       ),
                     ],
                   ),
+                  SizedBox(height: 16),
+                  Text(
+                    "End Date",
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black),
+                  ),
+                  SizedBox(height: 4),
                   Row(
                     children: [
                       Expanded(
                         child: Text(
-                            "End Date: ${_endDate != null ? formatter.format(_endDate!) : 'Not set'}"),
+                          _endDate != null
+                              ? formatter.format(_endDate!)
+                              : 'Not selected',
+                          style: TextStyle(fontSize: 16),
+                        ),
                       ),
-                      TextButton(
+                      TextButton.icon(
+                        icon: Icon(
+                          Icons.calendar_today,
+                          color: Colors.orange[600],
+                          size: 40,
+                        ),
+                        label: Text("Select",
+                            style: TextStyle(color: Colors.orange[600])),
                         onPressed: () => _pickDate(context, false),
-                        child: Text('Select End Date'),
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _updateGoal,
-                    child: Text('Update Goal'),
+                  SizedBox(height: 34),
+                  Center(
+                    child: ElevatedButton.icon(
+                      icon: Icon(Icons.save),
+                      label: Text(
+                        "Update Goal",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange[600],
+                        foregroundColor: Colors.white,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: _updateGoal,
+                    ),
                   ),
                 ],
               ),

@@ -118,7 +118,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
               Positioned.fill(
                 child: IgnorePointer(
                   child: CustomPaint(
-                      painter: BackgroundShapePainter(panOffset),
+                      // painter: BackgroundShapePainter(panOffset),
                       ),
                 ),
               ),

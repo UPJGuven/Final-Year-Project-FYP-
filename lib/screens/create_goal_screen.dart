@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class CreateGoalScreen extends StatefulWidget {
   final String? parentGoalId;
@@ -82,37 +83,149 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final formatter = DateFormat('yyyy-MM-dd');
+
     return Scaffold(
-      appBar: AppBar(title: Text('Create Goal')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
+            Text("Create Goal", style: TextStyle(fontWeight: FontWeight.bold)),
+            SizedBox(width: 8),
+            Image.asset('assets/images/FYP Logo No Text v1.0.png', height: 30),
+          ],
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Goal Name Field
+            Text(
+              'Goal Name',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
+            ),
+            SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue[500]!, Colors.blue[600]!],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 4)),
+                ],
+              ),
+              child: TextField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Goal Name'),
-                maxLength: 45),
-            TextField(
-              controller: _descriptionController,
-              decoration: InputDecoration(labelText: 'Description'),
+                maxLength: 45,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Enter Goal Name...',
+                  hintStyle: TextStyle(color: Colors.white70),
+                  counterText: '',
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                ),
+              ),
             ),
+
             SizedBox(height: 16),
-            ListTile(
-              title: Text(
-                  'Start Date: ${_startDate.toLocal().toString().split(' ')[0]}'),
-              trailing: Icon(Icons.calendar_today),
-              onTap: () => _selectDate(context, true),
+
+            // Description Field
+            Text(
+              'Goal Description',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
             ),
-            ListTile(
-              title: Text(
-                  'End Date: ${_endDate.toLocal().toString().split(' ')[0]}'),
-              trailing: Icon(Icons.calendar_today),
-              onTap: () => _selectDate(context, false),
+            SizedBox(height: 8),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blue[500]!, Colors.blue[600]!],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 4)),
+                ],
+              ),
+              child: TextField(
+                controller: _descriptionController,
+                maxLines: 8,
+                style: TextStyle(color: Colors.white),
+                decoration: InputDecoration(
+                  hintText: 'Enter Goal Description...',
+                  hintStyle: TextStyle(color: Colors.white70),
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                ),
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _addGoal,
-              child: Text('Add Goal'),
+
+            SizedBox(height: 24),
+
+            // Start Date
+            Text("Start Date", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    formatter.format(_startDate),
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                TextButton.icon(
+                  icon: Icon(Icons.calendar_today, color: Colors.orange[600], size: 40),
+                  label: Text("Select", style: TextStyle(color: Colors.orange[600])),
+                  onPressed: () => _selectDate(context, true),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 16),
+
+            // End Date
+            Text("End Date", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            SizedBox(height: 4),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    formatter.format(_endDate),
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                TextButton.icon(
+                  icon: Icon(Icons.calendar_today, color: Colors.orange[600], size: 40),
+                  label: Text("Select", style: TextStyle(color: Colors.orange[600])),
+                  onPressed: () => _selectDate(context, false),
+                ),
+              ],
+            ),
+
+            SizedBox(height: 34),
+
+            Center(
+              child: ElevatedButton.icon(
+                icon: Icon(Icons.add),
+                label: Text("Create Goal", style: TextStyle(fontSize: 20)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange[600],
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onPressed: _addGoal,
+              ),
             ),
           ],
         ),
@@ -120,3 +233,4 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     );
   }
 }
+
