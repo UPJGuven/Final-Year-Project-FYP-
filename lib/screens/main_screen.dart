@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'create_goal_screen.dart';
+import 'edit_goal_screen.dart';
 import 'goal_hierarchy_screen.dart';
 import 'todo_list_screen.dart';
 import '../widgets/bottom_nav_bar.dart';
+import 'progress_overview_screen.dart';
+import '../widgets/goal_detail_popup.dart';
 
 class MainScreen extends StatefulWidget {
   final int initialIndex;
@@ -14,8 +18,40 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   late int _currentIndex;
 
-  final List<Widget> _screens = [
+  List<Widget> get _screens => [
     GoalHierarchyScreen(),
+    ProgressOverviewScreen(
+      onGoalSelected: (goalId) {
+        setState(() {
+          _currentIndex = 0;
+        });
+
+        Future.delayed(Duration(milliseconds: 300), () {
+          showGoalDetailPopup(
+            context: context,
+            goalId: goalId,
+            onEdit: () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: goalId)),
+              );
+            },
+            onSubGoal: () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: goalId)),
+              );
+            },
+            onParentGoal: () {
+              Navigator.push(context,
+                MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: goalId, isParentGoal: true)),
+              );
+            },
+            onDelete: () {
+              // Optional
+            },
+          );
+        });
+      },
+    ),
     ToDoListScreen(),
   ];
 

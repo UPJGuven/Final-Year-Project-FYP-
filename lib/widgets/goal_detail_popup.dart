@@ -51,7 +51,7 @@ void showGoalDetailPopup({
                     constraints: BoxConstraints(
                       maxHeight: MediaQuery.of(context).size.height * 0.75,
                     ),
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withOpacity(0.95),
                       child: Scrollbar(
                         radius: Radius.circular(8),
                         thumbVisibility: true,
@@ -130,7 +130,8 @@ void showGoalDetailPopup({
                                   max: 100,
                                   divisions: 20,
                                   label: "${progress.toInt()}%",
-                                  activeColor: Colors.orange[600],
+                                  activeColor: Colors.blue,
+                                  thumbColor: Colors.orange[600],
                                   onChanged: (value) =>
                                       setState(() => progress = value),
                                   onChangeEnd: (value) async {
@@ -145,7 +146,6 @@ void showGoalDetailPopup({
 
                                 SizedBox(height: 24),
 
-                                // 🔘 All action buttons wrapped
                                 Center(
                                   child: Wrap(
                                     alignment: WrapAlignment.center,

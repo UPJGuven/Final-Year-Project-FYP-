@@ -7,8 +7,8 @@ class BackgroundShapePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paintOrange = Paint()..color = Colors.orange.shade600.withOpacity(0.25);
-    final paintBlue = Paint()..color = Colors.blue.withOpacity(0.25);
+    final paintOrange = Paint()..color = Colors.orange.shade600.withOpacity(0.5);
+    final paintBlue = Paint()..color = Colors.blue.withOpacity(0.5);
 
     // Move shapes slightly based on panning
     canvas.drawCircle(Offset(size.width * 0.25 + panOffset.dx * 0.05, size.height * 0.2 + panOffset.dy * 0.05), 120, paintOrange);

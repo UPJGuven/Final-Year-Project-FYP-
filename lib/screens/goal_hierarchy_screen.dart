@@ -9,6 +9,7 @@ import 'help_guidance_screen.dart';
 import 'settings_screen.dart';
 import '../widgets/goal_detail_popup.dart';
 import '../widgets/background_shape_painter.dart';
+import '../widgets/goal_node_widget.dart';
 
 class GoalHierarchyScreen extends StatefulWidget {
   @override
@@ -16,7 +17,8 @@ class GoalHierarchyScreen extends StatefulWidget {
 }
 
 class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
-  final TransformationController _transformController = TransformationController();
+  final TransformationController _transformController =
+      TransformationController();
 
   void _showDeleteConfirmation(BuildContext context, String goalId) {
     showDialog(
@@ -116,8 +118,8 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
               Positioned.fill(
                 child: IgnorePointer(
                   child: CustomPaint(
-                    painter: BackgroundShapePainter(panOffset),
-                  ),
+                      painter: BackgroundShapePainter(panOffset),
+                      ),
                 ),
               ),
               Consumer<GoalProvider>(
@@ -130,88 +132,87 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                     maxScale: 2.0,
                     boundaryMargin: EdgeInsets.all(800),
                     child: goalNodes.isEmpty
-                        ? Center(child: Text("No goals found"))
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 345, horizontal: 50),
+                            child: Center(
+                                child: Text(
+                                    "Tap the '+' button to add your first goal!",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600]))))
                         : DirectGraph(
-                      list: goalNodes,
-                      centered: true,
-                      defaultCellSize: Size(140.0, 100.0),
-                      cellPadding: EdgeInsets.all(30.0),
-                      orientation: MatrixOrientation.Vertical,
-                      nodeBuilder: (context, node) {
-                        final goalIdToName = Provider.of<GoalProvider>(context, listen: false).goalIdToName;
-                        final name = goalIdToName[node.id] ?? '[Missing Name]';
-                        return GestureDetector(
-                          onLongPress: () {
-                            showGoalDetailPopup(
-                              context: context,
-                              goalId: node.id,
-                              onEdit: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => EditGoalScreen(goalId: node.id)),
-                                );
-                              },
-                              onSubGoal: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (_) => CreateGoalScreen(parentGoalId: node.id)),
-                                );
-                              },
-                              onParentGoal: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => CreateGoalScreen(parentGoalId: node.id, isParentGoal: true),
-                                  ),
-                                );
-                              },
-                              onDelete: () => _showDeleteConfirmation(context, node.id),
-                            );
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Colors.blue[500]!, Colors.blue[600]!],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              borderRadius: BorderRadius.circular(8.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 4,
-                                  offset: Offset(2, 4),
-                                ),
-                              ],
-                            ),
-                            child: Text(
-                              name,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      styleBuilder: (edge) {
-                        var paint = Paint()
-                          ..color = Colors.grey
-                          ..style = PaintingStyle.stroke
-                          ..strokeCap = StrokeCap.round
-                          ..strokeJoin = StrokeJoin.round
-                          ..strokeWidth = 3;
+                            list: goalNodes,
+                            centered: true,
+                            defaultCellSize: Size(140.0, 100.0),
+                            cellPadding: EdgeInsets.all(30.0),
+                            orientation: MatrixOrientation.Vertical,
+                            nodeBuilder: (context, node) {
+                              final goalIdToName = Provider.of<GoalProvider>(
+                                      context,
+                                      listen: false)
+                                  .goalIdToName;
+                              final name =
+                                  goalIdToName[node.id] ?? '[Missing Name]';
+                              final goal = goalProvider.goals.firstWhere(
+                                  (g) => g['id'] == node.id,
+                                  orElse: () => {});
+                              final progress =
+                                  (goal['goalDetails']?['progress'] ?? 0)
+                                      .toDouble();
+                              return GestureDetector(
+                                onLongPress: () {
+                                  showGoalDetailPopup(
+                                    context: context,
+                                    goalId: node.id,
+                                    onEdit: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => EditGoalScreen(
+                                                goalId: node.id)),
+                                      );
+                                    },
+                                    onSubGoal: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (_) => CreateGoalScreen(
+                                                parentGoalId: node.id)),
+                                      );
+                                    },
+                                    onParentGoal: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => CreateGoalScreen(
+                                              parentGoalId: node.id,
+                                              isParentGoal: true),
+                                        ),
+                                      );
+                                    },
+                                    onDelete: () => _showDeleteConfirmation(
+                                        context, node.id),
+                                  );
+                                },
+                                child: GoalNodeWidget(
+                                    name: name, progress: progress),
+                              );
+                            },
+                            styleBuilder: (edge) {
+                              var paint = Paint()
+                                ..color = Colors.grey
+                                ..style = PaintingStyle.stroke
+                                ..strokeCap = StrokeCap.round
+                                ..strokeJoin = StrokeJoin.round
+                                ..strokeWidth = 3;
 
-                        return EdgeStyle(
-                          lineStyle: LineStyle.solid,
-                          linePaint: paint,
-                          borderRadius: 80,
-                        );
-                      },
-                    ),
+                              return EdgeStyle(
+                                lineStyle: LineStyle.solid,
+                                linePaint: paint,
+                                borderRadius: 80,
+                              );
+                            },
+                          ),
                   );
                 },
               ),
@@ -224,7 +225,8 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
         foregroundColor: Colors.white,
         shape: CircleBorder(),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateGoalScreen()));
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CreateGoalScreen()));
         },
         child: Icon(Icons.add),
       ),

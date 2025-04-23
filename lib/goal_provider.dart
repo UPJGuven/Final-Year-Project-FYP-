@@ -47,14 +47,4 @@ class GoalProvider with ChangeNotifier {
       );
     }).toList();
   }
-
-  // void addGoalNode(String goalName, List<String> subGoals) {
-  //   goalNodes.add(
-  //     NodeInput(
-  //       id: goalName,
-  //       next: subGoals.map((dep) => EdgeInput(outcome: dep)).toList(),
-  //     ),
-  //   );
-  //   notifyListeners(); // Notify UI to rebuild
-  // }
 }

@@ -6,11 +6,7 @@ import 'package:fyp_goalapp/screens/help_guidance_screen.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'goal_provider.dart';
-import 'screens/loading_screen.dart';
 import 'screens/login_screen.dart';
-import 'screens/goal_hierarchy_screen.dart';
-import 'screens/todo_list_screen.dart';
-import 'widgets/bottom_nav_bar.dart';
 import 'screens/main_screen.dart';
 
 void main() async {
