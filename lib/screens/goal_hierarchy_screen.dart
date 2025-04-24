@@ -118,7 +118,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
               Positioned.fill(
                 child: IgnorePointer(
                   child: CustomPaint(
-                      // painter: BackgroundShapePainter(panOffset),
+                      painter: BackgroundShapePainter(panOffset),
                       ),
                 ),
               ),
@@ -143,7 +143,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                         : DirectGraph(
                             list: goalNodes,
                             centered: true,
-                            defaultCellSize: Size(140.0, 100.0),
+                            defaultCellSize: Size(160.0, 130.0),
                             cellPadding: EdgeInsets.all(30.0),
                             orientation: MatrixOrientation.Vertical,
                             nodeBuilder: (context, node) {

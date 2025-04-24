@@ -62,6 +62,16 @@ flutter:
     - assets/images/ShmooMoo_2025.png
     - assets/images/FYP Logo v1.0 No Line.png
     - assets/images/FYP Logo No Text v1.0.png
+    - assets/images/FYP Add First Goal.png
+    - assets/images/FYP What is Higher-Arc.png
+    - assets/images/FYP Parent Goal .png
+    - assets/images/FYP View Goal.png
+    - assets/images/FYP Goal Progress Screen.png
+    - assets/images/FYP To-do Task Screen.png
+    - assets/images/FYP Chef Goal.png
+    - assets/images/FYP Cooking tree edit.png
+    - assets/images/FYP Why and How.png
+    - assets/images/FYP View Cooking Goal.png
   fonts:
     - family: MADEOkineSans
       fonts:

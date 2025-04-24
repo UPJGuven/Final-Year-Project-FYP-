@@ -125,7 +125,7 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
               ),
               child: TextField(
                 controller: _nameController,
-                maxLength: 45,
+                maxLength: 60,
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                   hintText: 'Enter Goal Name...',

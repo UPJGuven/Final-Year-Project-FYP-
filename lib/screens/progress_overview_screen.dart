@@ -8,7 +8,7 @@ import 'edit_goal_screen.dart';
 
 Color getProgressColor(double progress) {
   if (progress < 33) return Colors.redAccent;
-  if (progress < 66) return Colors.orangeAccent;
+  if (progress < 99) return Colors.orangeAccent;
   return Colors.greenAccent;
 }
 

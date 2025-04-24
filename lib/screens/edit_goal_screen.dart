@@ -138,7 +138,7 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
                     ),
                     child: TextField(
                       controller: _nameController,
-                      maxLength: 45,
+                      maxLength: 60,
                       style: TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         counterText: '',
