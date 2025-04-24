@@ -26,6 +26,52 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   String _filter = 'in_progress';
   // default filter.
 
+  void _showDeleteConfirmation(BuildContext context, String goalId) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Delete Goal'),
+        content: Text('Are you sure you want to delete this goal?\n \n'
+            'NOTE: This action will separate the sub-goals into a new tree.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                await _deleteGoal(goalId);
+                Navigator.of(context).pop(); // Close the dialog AFTER delete
+              } catch (e) {
+                print("Failed to delete goal: $e");
+                Navigator.of(context)
+                    .pop(); // Still close the dialog, even on error
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Failed to delete goal')),
+                );
+              }
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteGoal(String goalId) async {
+    final goalsRef = FirebaseFirestore.instance.collection('Goal'); // grab database reference
+
+    final subgoals =
+    await goalsRef.where('parentGoalId', isEqualTo: goalId).get();
+    for (var doc in subgoals.docs) {
+      await doc.reference.update({'parentGoalId': ''});
+    }
+    // removes parentGoalId for the subgoals using this parent's goalID
+    await goalsRef.doc(goalId).delete();
+    print('Deleted goal $goalId');
+  }
+
   @override
   Widget build(BuildContext context) {
     final userId = FirebaseAuth.instance.currentUser?.uid;
@@ -124,7 +170,8 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
                         )),
                       );
                     },
-                    onDelete: () {
+                    onDelete: () { _showDeleteConfirmation(
+                          context, goal['id']);
                     },
                   );
                 },
