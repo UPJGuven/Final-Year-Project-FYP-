@@ -53,7 +53,7 @@ class _HelpGuidanceScreenState extends State<HelpGuidanceScreen> {
       'image': 'assets/images/FYP What is Higher-Arc.png',
       'text': [
         'Higher-Arc is a hierarchical goal-setting mobile application designed to help users visualize, manage and track personal growth by organising goals into hierarchies of meaningful and actionable high, medium and low-level goals.',
-        'Higher-Arc lets you create your own goal hierarchy, track your progress and create your own to-do list!'
+        'Higher-Arc lets you set goals, create your own goal hierarchy, track your progress and create your own to-do list!'
       ]
     },
     {

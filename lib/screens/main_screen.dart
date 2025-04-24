@@ -46,7 +46,6 @@ class _MainScreenState extends State<MainScreen> {
               );
             },
             onDelete: () {
-              // Optional
             },
           );
         });
@@ -54,6 +53,8 @@ class _MainScreenState extends State<MainScreen> {
     ),
     ToDoListScreen(),
   ];
+
+  // screens list for navigation, passes goal information to progression screen
 
   @override
   void initState() {
@@ -76,6 +77,7 @@ class _MainScreenState extends State<MainScreen> {
           });
         },
       ),
+      // bottom navigatinon bar
     );
   }
 }

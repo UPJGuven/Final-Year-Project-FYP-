@@ -32,19 +32,25 @@ class GoalProvider with ChangeNotifier {
       };
       _goals = goals; // save raw goal maps for logic checks
       _goalNodes = _convertToNodes(goals);
+
+      // pass goal data to be converted into graphite node format.
       notifyListeners();
     });
   }
+  // code to provide goal information to listeners across the app
 
   List<NodeInput> _convertToNodes(List<Map<String, dynamic>> goals) {
     return goals.map((goal) {
       return NodeInput(
-        id: goal['id'], // ✅ use unique goal ID from Firestore
+        id: goal['id'],
         next: goals
             .where((g) => g['parentGoalId'] == goal['id'])
-            .map((childGoal) => EdgeInput(outcome: childGoal['id'])) // ✅ link by Firestore ID
+            .map((childGoal) => EdgeInput(outcome: childGoal['id']))
             .toList(),
       );
     }).toList();
   }
+
+  // graphite format NodeInput(id:, next:)
+  // uses goalId parentGoalId to link goal nodes together.
 }

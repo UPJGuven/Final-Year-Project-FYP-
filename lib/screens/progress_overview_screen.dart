@@ -11,6 +11,7 @@ Color getProgressColor(double progress) {
   if (progress < 99) return Colors.orangeAccent;
   return Colors.greenAccent;
 }
+ // change progression meter colour depending on current progress field in firestore.
 
 class ProgressOverviewScreen extends StatefulWidget {
   final Function(String goalId) onGoalSelected;
@@ -23,6 +24,7 @@ class ProgressOverviewScreen extends StatefulWidget {
 
 class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
   String _filter = 'in_progress';
+  // default filter.
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +61,7 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
               PopupMenuItem(value: 'not_started', child: Text("Not Started")),
             ],
           ),
+          // filter button
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -69,6 +72,7 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
         builder: (context, snapshot) {
           if (!snapshot.hasData)
             return Center(child: CircularProgressIndicator());
+          // loading indicator
 
           final goals = snapshot.data!.docs
               .map((doc) => doc.data() as Map<String, dynamic>)
@@ -79,6 +83,7 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
             if (_filter == 'not_started') return progress == 0;
             return true;
           }).toList();
+          // grabs goal data and updates local progress variable
 
           if (goals.isEmpty) {
             return Center(child: Text("No goals match your filter.", style: TextStyle(fontSize: 16, color: Colors.grey[600])));
@@ -90,6 +95,8 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
               final goal = goals[index];
               final name = goal['goalDetails']['name'] ?? 'Unnamed';
               final progress = (goal['goalDetails']['progress'] ?? 0).toDouble();
+
+              // assigning goal data for use in list view.
 
               return ListTile(
                 onLongPress: () {
@@ -118,7 +125,6 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
                       );
                     },
                     onDelete: () {
-                      // Optionally refresh the progress screen
                     },
                   );
                 },
@@ -138,6 +144,7 @@ class _ProgressOverviewScreenState extends State<ProgressOverviewScreen> {
                     Text("${progress.toInt()}%"),
                   ],
                 ),
+                // listview goal with progression meter
               );
             },
           );

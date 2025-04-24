@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import '../todo_service.dart';
 import 'settings_screen.dart';
 import 'help_guidance_screen.dart';
@@ -12,10 +10,15 @@ class ToDoListScreen extends StatefulWidget {
 
 class _ToDoListScreenState extends State<ToDoListScreen> {
   final Map<String, TextEditingController> _controllers = {};
+  // textbox controllers
   final Map<String, FocusNode> _focusNodes = {};
+  // focused items
   String? _editingTaskId;
+  // track which items are being edited
   bool _isLoading = true;
   List<Map<String, dynamic>> _tasks = [];
+  // to-do list list
+
 
   @override
   void initState() {
@@ -27,6 +30,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
       });
     });
   }
+  // initialise task list from todo_service's getUserTasks()
 
   void _refreshTasks() async {
     final fetchedTasks = await getUserTasks().first;
@@ -34,6 +38,8 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
       _tasks = fetchedTasks;
     });
   }
+
+  // refresh tasks
 
   void _unfocusAndSave(String taskId, bool completed) {
     final controller = _controllers[taskId];
@@ -45,6 +51,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
     }
     setState(() => _editingTaskId = null);
   }
+  // when user stops editing a to-do, call todo_service's updateTask()
 
   @override
   void dispose() {
@@ -52,6 +59,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
     _focusNodes.values.forEach((f) => f.dispose());
     super.dispose();
   }
+  // stops memory leak and performance issues
 
   @override
   Widget build(BuildContext context) {
@@ -101,15 +109,24 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                     itemCount: _tasks.length,
                     onReorder: (oldIndex, newIndex) async {
                       if (newIndex > oldIndex) newIndex--;
+                      // adjust newIndex if the item is moved down the list
+
                       final updated = List.of(_tasks);
+
+                      // clone the current task list to reorder it
+
                       final moved = updated.removeAt(oldIndex);
                       updated.insert(newIndex, moved);
+                      // remove the item from its old position and insert it into the new position
 
                       setState(() => _tasks = updated);
+                      // update UI
 
                       for (int i = 0; i < updated.length; i++) {
                         await updateTaskPosition(updated[i]['id'], i);
                       }
+
+                      // update the position of each task in firebase to create the new order
 
                       await Future.delayed(Duration(milliseconds: 250));
                       _refreshTasks();
@@ -127,6 +144,7 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                             _unfocusAndSave(taskId, task['completed']);
                           }
                         });
+                        // if focus is lost and this was the editing task, save changes
                         return node;
                       });
 
@@ -210,6 +228,9 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                                     ),
                                   ),
                                 ),
+
+                          // code to edit to-do list text
+
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -226,6 +247,9 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                                       value: 'delete', child: Text('Delete')),
                                 ],
                               ),
+
+                              // delete to-do task button
+
                               GestureDetector(
                                 onTap: () => FocusScope.of(context).unfocus(),
                                 child: ReorderableDragStartListener(
@@ -234,7 +258,10 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
                                       color: Colors.white),
                                 ),
                               ),
+
+                              // drag to-do task button
                             ],
+
                           ),
                         ),
                       );
@@ -251,6 +278,9 @@ class _ToDoListScreenState extends State<ToDoListScreen> {
         shape: CircleBorder(),
         child: Icon(Icons.add),
       ),
+
+      // create to-do task button
+
     );
   }
 }

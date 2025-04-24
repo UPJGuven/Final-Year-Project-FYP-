@@ -7,7 +7,11 @@ class CreateGoalScreen extends StatefulWidget {
   final String? parentGoalId;
   final bool isParentGoal;
 
+  // variables for paremtGoalID
+
   const CreateGoalScreen({this.parentGoalId, this.isParentGoal = false});
+
+  // defaults isParentGoal to false
 
   @override
   _CreateGoalScreenState createState() => _CreateGoalScreenState();
@@ -16,6 +20,8 @@ class CreateGoalScreen extends StatefulWidget {
 class _CreateGoalScreenState extends State<CreateGoalScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+
+  // name and descriptions controller
 
   DateTime _startDate = DateTime.now();
   DateTime _endDate = DateTime.now().add(Duration(days: 7));
@@ -29,8 +35,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
 
     final goalsRef = FirebaseFirestore.instance.collection('Goal');
 
-    DocumentReference newDoc = goalsRef.doc(); // Let Firestore generate the ID
-    final newGoalId = newDoc.id;
+    DocumentReference newDoc = goalsRef.doc(); // get database reference
+    final newGoalId = newDoc.id; // Use firebase's generated ID
 
     String? actualParentGoalId;
 
@@ -58,8 +64,9 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
         'endDate': Timestamp.fromDate(_endDate),
       }
     };
+    // data to be added to database
 
-    await newDoc.set(goalData);
+    await newDoc.set(goalData); // add to database
     Navigator.pop(context);
   }
 
@@ -108,7 +115,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             // Goal Name Field
             Text(
               'Goal Name',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
             ),
             SizedBox(height: 8),
             Container(
@@ -120,7 +130,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                 ),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
-                  BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 4)),
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(2, 4)),
                 ],
               ),
               child: TextField(
@@ -132,7 +145,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   hintStyle: TextStyle(color: Colors.white70),
                   counterText: '',
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 ),
               ),
             ),
@@ -142,7 +156,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
             // Description Field
             Text(
               'Goal Description',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.black),
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
             ),
             SizedBox(height: 8),
             Container(
@@ -154,7 +171,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                 ),
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
-                  BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(2, 4)),
+                  BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 4,
+                      offset: Offset(2, 4)),
                 ],
               ),
               child: TextField(
@@ -165,15 +185,16 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   hintText: 'Enter Goal Description...',
                   hintStyle: TextStyle(color: Colors.white70),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 ),
               ),
             ),
 
             SizedBox(height: 24),
 
-            // Start Date
-            Text("Start Date", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            Text("Start Date",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             SizedBox(height: 4),
             Row(
               children: [
@@ -184,8 +205,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   ),
                 ),
                 TextButton.icon(
-                  icon: Icon(Icons.calendar_today, color: Colors.orange[600], size: 40),
-                  label: Text("Select", style: TextStyle(color: Colors.orange[600])),
+                  icon: Icon(Icons.calendar_today,
+                      color: Colors.orange[600], size: 40),
+                  label: Text("Select",
+                      style: TextStyle(color: Colors.orange[600])),
                   onPressed: () => _selectDate(context, true),
                 ),
               ],
@@ -193,8 +216,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
 
             SizedBox(height: 16),
 
-            // End Date
-            Text("End Date", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+            Text("End Date",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
             SizedBox(height: 4),
             Row(
               children: [
@@ -205,8 +228,10 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   ),
                 ),
                 TextButton.icon(
-                  icon: Icon(Icons.calendar_today, color: Colors.orange[600], size: 40),
-                  label: Text("Select", style: TextStyle(color: Colors.orange[600])),
+                  icon: Icon(Icons.calendar_today,
+                      color: Colors.orange[600], size: 40),
+                  label: Text("Select",
+                      style: TextStyle(color: Colors.orange[600])),
                   onPressed: () => _selectDate(context, false),
                 ),
               ],
@@ -222,7 +247,8 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
                   backgroundColor: Colors.orange[600],
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(horizontal: 32, vertical: 14),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: _addGoal,
               ),
@@ -233,4 +259,3 @@ class _CreateGoalScreenState extends State<CreateGoalScreen> {
     );
   }
 }
-

@@ -16,6 +16,9 @@ void showGoalDetailPopup({
     barrierLabel: "Goal Details",
     barrierColor: Colors.black54,
     transitionDuration: Duration(milliseconds: 300),
+
+    // barrier outline
+
     pageBuilder: (context, animation, secondaryAnimation) {
       return Center(
         child: Dialog(
@@ -24,6 +27,9 @@ void showGoalDetailPopup({
           child: FutureBuilder<DocumentSnapshot>(
             future:
                 FirebaseFirestore.instance.collection('Goal').doc(goalId).get(),
+
+
+
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(child: CircularProgressIndicator());
@@ -33,6 +39,7 @@ void showGoalDetailPopup({
               if (data == null) {
                 return Center(child: Text("Goal not found"));
               }
+              // get goal data
 
               final details = data['goalDetails'] ?? {};
               final name = details['name'] ?? '[Unnamed]';
@@ -42,6 +49,8 @@ void showGoalDetailPopup({
               final hasParent =
                   data['parentGoalId'] != null && data['parentGoalId'] != '';
               double progress = (details['progress'] ?? 0).toDouble();
+
+              // assign goal data to UI variables.
 
               return ClipRRect(
                 borderRadius: BorderRadius.circular(16),
@@ -144,6 +153,8 @@ void showGoalDetailPopup({
                                   },
                                 ),
 
+                                // progress slider, updates progress field in firebase upon change
+
                                 SizedBox(height: 24),
 
                                 Center(
@@ -164,6 +175,9 @@ void showGoalDetailPopup({
                                           onEdit();
                                         },
                                       ),
+
+                                      // edit goal button
+
                                       ElevatedButton.icon(
                                         icon: Icon(Icons.add_box_rounded),
                                         label: Text("Subgoal"),
@@ -176,6 +190,9 @@ void showGoalDetailPopup({
                                           onSubGoal();
                                         },
                                       ),
+
+                                      // create subgoal button
+
                                       if (!hasParent)
                                         ElevatedButton.icon(
                                           icon: Icon(Icons.arrow_circle_up),
@@ -189,6 +206,9 @@ void showGoalDetailPopup({
                                             onParentGoal();
                                           },
                                         ),
+
+                                      // create parent goal button
+
                                       ElevatedButton.icon(
                                         icon: Icon(Icons.delete_forever),
                                         label: Text("Delete"),
@@ -201,6 +221,9 @@ void showGoalDetailPopup({
                                           onDelete();
                                         },
                                       ),
+
+                                      // delete button
+
                                     ],
                                   ),
                                 )
@@ -225,6 +248,8 @@ void showGoalDetailPopup({
         ).animate(CurvedAnimation(parent: animation, curve: Curves.easeOut)),
         child: child,
       );
+
+      // goal widget slide up animation.
     },
   );
 }

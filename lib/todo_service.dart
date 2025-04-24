@@ -7,6 +7,7 @@ final _auth = FirebaseAuth.instance;
 Stream<List<Map<String, dynamic>>> getUserTasks() {
   final user = _auth.currentUser;
   if (user == null) return const Stream.empty();
+  // get current signed-in user
 
   return _firestore
       .collection('ToDo')
@@ -24,6 +25,8 @@ Stream<List<Map<String, dynamic>>> getUserTasks() {
   }).toList());
 }
 
+// gets to-do list data of current user from firebase
+
 Future<void> addTask(String text) async {
   final user = _auth.currentUser;
   if (user == null) return;
@@ -35,9 +38,12 @@ Future<void> addTask(String text) async {
       .limit(1)
       .get();
 
+  // get snapshot of a to-do item
+
   final newPosition = snapshot.docs.isNotEmpty
       ? (snapshot.docs.first.data()['position'] ?? 0) + 1
       : 0;
+  // index new position
 
   await _firestore.collection('ToDo').add({
     'userId': user.uid,
@@ -46,7 +52,9 @@ Future<void> addTask(String text) async {
     'position': newPosition,
     'timestamp': FieldValue.serverTimestamp(),
   });
+  // add to-do to firebase .
 }
+//
 
 Future<void> updateTask(String docId, String newText, bool isDone) async {
   await _firestore.collection('ToDo').doc(docId).update({
@@ -54,13 +62,17 @@ Future<void> updateTask(String docId, String newText, bool isDone) async {
 'completed': isDone,
 });
 }
+// update ONLY text and completion status in firebase
 
 Future<void> updateTaskPosition(String docId, int newPosition) async {
   await _firestore.collection('ToDo').doc(docId).update({
     'position': newPosition,
   });
 }
+//update task position index
 
 Future<void> deleteTask(String docId) async {
   await _firestore.collection('ToDo').doc(docId).delete();
 }
+
+// delete to-do

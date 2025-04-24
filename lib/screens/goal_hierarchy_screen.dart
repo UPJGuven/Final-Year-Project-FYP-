@@ -20,6 +20,9 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
   final TransformationController _transformController =
       TransformationController();
 
+  // background blue and orange circles art controller.
+
+
   void _showDeleteConfirmation(BuildContext context, String goalId) {
     showDialog(
       context: context,
@@ -54,14 +57,14 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
   }
 
   Future<void> _deleteGoal(String goalId) async {
-    final goalsRef = FirebaseFirestore.instance.collection('Goal');
+    final goalsRef = FirebaseFirestore.instance.collection('Goal'); // grab database reference
 
     final subgoals =
         await goalsRef.where('parentGoalId', isEqualTo: goalId).get();
     for (var doc in subgoals.docs) {
       await doc.reference.update({'parentGoalId': ''});
     }
-
+    // removes parentGoalId for the subgoals using this parent's goalID
     await goalsRef.doc(goalId).delete();
     print('Deleted goal $goalId');
   }
@@ -99,6 +102,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
               );
             },
           ),
+          // help and guidance navigation button
           IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
@@ -106,12 +110,14 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                   context, MaterialPageRoute(builder: (_) => SettingsScreen()));
             },
           ),
+          // settings navigation button
         ],
       ),
       body: ValueListenableBuilder<Matrix4>(
         valueListenable: _transformController,
         builder: (context, matrix, _) {
           final panOffset = Offset(matrix.storage[12], matrix.storage[13]);
+          // listens for user movement to move background blue and orange circles art
 
           return Stack(
             children: [
@@ -119,6 +125,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                 child: IgnorePointer(
                   child: CustomPaint(
                       painter: BackgroundShapePainter(panOffset),
+                      // background blue and orange circle art
                       ),
                 ),
               ),
@@ -159,6 +166,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                               final progress =
                                   (goal['goalDetails']?['progress'] ?? 0)
                                       .toDouble();
+                              // gets goal data in correct format for goal node
                               return GestureDetector(
                                 onLongPress: () {
                                   showGoalDetailPopup(
@@ -212,6 +220,8 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
                                 borderRadius: 80,
                               );
                             },
+                            // graphite node link styling.
+
                           ),
                   );
                 },
@@ -230,6 +240,7 @@ class _GoalHierarchyScreenState extends State<GoalHierarchyScreen> {
         },
         child: Icon(Icons.add),
       ),
+      // Add goal orange button
     );
   }
 }

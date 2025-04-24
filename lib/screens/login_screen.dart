@@ -4,7 +4,7 @@ import '../auth_service.dart';
 
 class LoginScreen extends StatelessWidget {
   final AuthService _authService = AuthService();
-
+  // grab object from firebase AuthService for authentication service
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +24,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
+            // orange circle art
 
             Positioned(
               bottom: -120,
@@ -37,6 +38,7 @@ class LoginScreen extends StatelessWidget {
                 ),
               ),
             ),
+            // blue circle art
 
             // Main content
             Center(
@@ -52,9 +54,8 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 20),
 
-                    // Slogan
                     Text(
-                      "\"The transformation or inner journey of a character over the course of a story\".",
+                      "\"Set goals, create your own goal hierarchy, track your progress and create your own to-do list!\".",
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -64,7 +65,6 @@ class LoginScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 40),
 
-                    // Sign In Button
                     ElevatedButton.icon(
                       icon: Icon(Icons.login, color: Colors.white),
                       label: Text(
@@ -81,6 +81,7 @@ class LoginScreen extends StatelessWidget {
                       ),
                       onPressed: () async {
                         User? user = await _authService.signInWithGoogle();
+                        // authentication
                         if (user == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -90,6 +91,7 @@ class LoginScreen extends StatelessWidget {
                         }
                       },
                     ),
+                    // Sign In Button
                   ],
                 ),
               ),

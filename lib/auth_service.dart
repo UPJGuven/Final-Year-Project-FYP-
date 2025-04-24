@@ -6,6 +6,8 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
+  // initialise authentication and google signin objects
+
   Future<User?> signInWithGoogle() async {
     print("Starting Google sign-in...");
     try {
@@ -18,17 +20,23 @@ class AuthService {
 
       final GoogleSignInAuthentication googleAuth =
           await googleUser.authentication;
+
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
+      // gets access token and idToken
+
       UserCredential result = await _auth.signInWithCredential(credential);
-      print(result.user);
+
+      // authenticating
 
       final user = FirebaseAuth.instance.currentUser;
       final userRef =
           FirebaseFirestore.instance.collection('Users').doc(user!.uid);
+
+      // get user
 
       final existingDoc = await userRef.get();
       final alreadyExists = existingDoc.exists;
@@ -37,14 +45,18 @@ class AuthService {
         print("Creating new user in Firestore...");
       }
 
+      // checks if the user exists, if not, creates user profile data.
+
       await userRef.set({
         'uid': user.uid,
         'email': user.email,
         'name': user.displayName,
-        if (!alreadyExists) 'hasSeenHelp': false, // Only set if new user
+        if (!alreadyExists) 'hasSeenHelp': false, // only set if new user for help & guidance screen
         'photoURL': user.photoURL,
         'createdAt': Timestamp.now(),
       }, SetOptions(merge: true));
+
+      // updates user information every log-in
 
       return result.user;
     } catch (e) {

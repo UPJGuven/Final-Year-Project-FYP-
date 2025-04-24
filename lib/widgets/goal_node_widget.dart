@@ -5,6 +5,7 @@ Color getProgressColor(double progress) {
   if (progress < 99) return Colors.orangeAccent;
   return Colors.greenAccent;
 }
+// change colour of progress bar depending on progress made.
 
 class GoalNodeWidget extends StatelessWidget {
   final String name;
@@ -57,6 +58,9 @@ class GoalNodeWidget extends StatelessWidget {
                 valueColor: AlwaysStoppedAnimation<Color>(
                   getProgressColor(progress),
                 ),
+
+                // changes progress indicator colour
+
               ),
             ),
           ],

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import '../auth_service.dart';
 import '../main.dart';
-import 'login_screen.dart';
-
 
 class SettingsScreen extends StatelessWidget {
   final AuthService _authService = AuthService();
-
+  // grab object from firebase AuthService for signout
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,11 +21,12 @@ class SettingsScreen extends StatelessWidget {
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(builder: (_) => AuthWrapper()),
-                    (route) => false,
+                (route) => false,
               );
             },
           ),
-          // Add more settings options here as needed.
+
+          // sign out makes the user go back to the login screen via main.dart's AuthWrapper() code.
         ],
       ),
     );

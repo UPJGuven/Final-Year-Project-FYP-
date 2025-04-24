@@ -14,9 +14,9 @@ class EditGoalScreen extends StatefulWidget {
 class _EditGoalScreenState extends State<EditGoalScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  // name and descriptions controller
   DateTime? _startDate;
   DateTime? _endDate;
-
   bool _isLoading = true;
 
   @override
@@ -43,6 +43,8 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
     }
   }
 
+  // load goal data into the name, description, start/end date widgets for edit.
+
   Future<void> _updateGoal() async {
     await FirebaseFirestore.instance.collection('Goal').doc(widget.goalId).set({
       "goalDetails": {
@@ -59,6 +61,8 @@ class _EditGoalScreenState extends State<EditGoalScreen> {
 
     Navigator.pop(context); // Return after updating
   }
+
+  // updates and merges goal data with existing goal data in firestore
 
   Future<void> _pickDate(BuildContext context, bool isStart) async {
     final DateTime? picked = await showDatePicker(

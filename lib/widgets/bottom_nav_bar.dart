@@ -9,13 +9,12 @@ class BottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 75, // Height of the bottom navigation bar
+      height: 75,
       decoration: BoxDecoration(
         color: Colors.white,
       ),
       child: Row(
         children: [
-          // Left Tab (Goals)
           Expanded(
             child: GestureDetector(
               onTap: () => onTap(0),
@@ -29,7 +28,12 @@ class BottomNavBar extends StatelessWidget {
                 ),
               ),
             ),
-          ),Expanded(
+          ),
+
+          // first tab (Goals)
+
+
+          Expanded(
             child: GestureDetector(
               onTap: () => onTap(1),
               child: Container(
@@ -43,7 +47,9 @@ class BottomNavBar extends StatelessWidget {
               ),
             ),
           ),
-          // Right Tab (To-Do)
+
+          // second tab (progression)
+
           Expanded(
             child: GestureDetector(
               onTap: () => onTap(2),
@@ -58,6 +64,8 @@ class BottomNavBar extends StatelessWidget {
               ),
             ),
           ),
+
+          // third tab (To-Do)
         ],
       ),
     );

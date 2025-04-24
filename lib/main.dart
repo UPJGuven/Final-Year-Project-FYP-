@@ -37,9 +37,13 @@ class AuthWrapper extends StatelessWidget {
           return Scaffold(body: Center(child: CircularProgressIndicator()));
         }
 
+        // wait for load
+
         if (!snapshot.hasData || snapshot.data == null) {
           return LoginScreen();
         }
+
+        // route user to the login screen if they aren't logged in
 
         final userId = snapshot.data!.uid;
 
@@ -47,6 +51,9 @@ class AuthWrapper extends StatelessWidget {
           providers: [
             ChangeNotifierProvider(create: (_) => GoalProvider(userId)),
           ],
+
+          // pass current user's userId to GoalProvider()
+
           child: FutureBuilder<bool>(
             future: shouldShowHelpScreen(userId),
             builder: (context, helpSnapshot) {
@@ -59,7 +66,8 @@ class AuthWrapper extends StatelessWidget {
                   ? HelpGuidanceScreen()
                   : MainScreen();
             },
-          ),
+          )
+          // decides where to navigate user based on shouldShowHelpScreen()
         );
       },
     );
@@ -85,3 +93,4 @@ Future<bool> shouldShowHelpScreen(String userId) async {
     return false;
   }
 }
+// routes user to help and guidance page if first ever sign-in,
